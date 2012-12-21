@@ -1,1 +1,1 @@
-from classes import BlickLoader
+from blick.classes import BlickLoader

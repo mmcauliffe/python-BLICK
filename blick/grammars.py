@@ -1,4 +1,4 @@
-from classes import Constraint
+from blick.classes import Constraint
 
 defaultConstraints = [Constraint("[+stress][+syllabic]", 1.87),
 Constraint("[+syllabic][+stress]", 0.673),

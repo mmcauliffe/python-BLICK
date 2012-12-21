@@ -17,27 +17,27 @@ class BlickLoader:
         
         if debug:
             self.updatelogfile("Loading syllabification information...")
-        from syllabification import ONSETS,VOWELS
+        from blick.syllabification import ONSETS,VOWELS
         self.onsets = ONSETS
         self.vowels = VOWELS
         
         if debug:
             self.updatelogfile("Loading grammar...")
         if grammarType == 'HayesWhite':
-            from grammars import hayesWhiteConstraints as constraints
+            from blick.grammars import hayesWhiteConstraints as constraints
         elif grammarType == 'NoStress':
-            from grammars import noStressConstraints as constraints
+            from blick.grammars import noStressConstraints as constraints
         else:
-            from grammars import defaultConstraints as constraints
+            from blick.grammars import defaultConstraints as constraints
         self.grammar = constraints
         if debug:
             self.updatelogfile("Loading natural classes...")
         if grammarType == 'HayesWhite':
-            from naturalClasses import hayesWhiteNC as nc
+            from blick.naturalClasses import hayesWhiteNC as nc
         elif grammarType == 'NoStress':
-            from naturalClasses import noStressNC as nc
+            from blick.naturalClasses import noStressNC as nc
         else:
-            from naturalClasses import defaultNC as nc
+            from blick.naturalClasses import defaultNC as nc
         self.segMapping = nc
         if debug:
             self.updatelogfile("Done initializing!")
@@ -52,54 +52,54 @@ class BlickLoader:
         f.write(linetowrite+"\n")
         f.close()
     
-    def _loadOnsets(self):
-        f = open(os.path.join(self.basedir,"Syllabification","Onsets.txt")).read().splitlines()
-        return set(f)
+    #def _loadOnsets(self):
+    #    f = open(os.path.join(self.basedir,"Syllabification","Onsets.txt")).read().splitlines()
+    #    return set(f)
     
-    def _loadVowels(self):
-        f = open(os.path.join(self.basedir,"Syllabification","Vowels.txt")).read().splitlines()
-        return set(f)
+    #def _loadVowels(self):
+    #    f = open(os.path.join(self.basedir,"Syllabification","Vowels.txt")).read().splitlines()
+    #    return set(f)
     
-    def _loadGrammar(self,grammarType):
-        if grammarType == 'custom':
-            fileName = 'CustomGrammar.txt'
-        elif grammarType == 'HayesWhite':
-            fileName = 'HayesWhiteGrammar.txt'
-        elif grammarType == 'NoStress':
-            fileName = 'NoStressGrammar.txt'
-        else:
-            fileName = 'DefaultGrammar.txt'
-        f = open(os.path.join(self.basedir,"Grammars",fileName)).read().splitlines()
-        cons = []
-        for i in range(len(f)):
-            if self.debug:
-                if i % 50 == 0:
-                    self.updatelogfile(" ".join(['Added constraint',str(i),'of',str(len(f))]))
-            cons.append(Constraint(f[i]))
-        return cons
+    #def _loadGrammar(self,grammarType):
+    #    if grammarType == 'custom':
+    #        fileName = 'CustomGrammar.txt'
+    #    elif grammarType == 'HayesWhite':
+    #        fileName = 'HayesWhiteGrammar.txt'
+    #    elif grammarType == 'NoStress':
+    #        fileName = 'NoStressGrammar.txt'
+    #    else:
+    #        fileName = 'DefaultGrammar.txt'
+    #    f = open(os.path.join(self.basedir,"Grammars",fileName)).read().splitlines()
+    #    cons = []
+    #    for i in range(len(f)):
+    #        if self.debug:
+    #            if i % 50 == 0:
+    #                self.updatelogfile(" ".join(['Added constraint',str(i),'of',str(len(f))]))
+    #        cons.append(Constraint(f[i]))
+    #    return cons
     
-    def _loadNaturalClasses(self,grammarType):
-        if grammarType == 'custom':
-            fileName = 'NaturalClassesForCustomGrammar.txt'
-        elif grammarType == 'HayesWhite':
-            fileName = 'NaturalClassesForHayesWhiteGrammar.txt'
-        elif grammarType == 'NoStress':
-            fileName = 'NaturalClassesForNoStressGrammar.txt'
-        else:
-            fileName = 'NaturalClassesForDefaultGrammar.txt'
-        f = open(os.path.join(self.basedir,"Grammars",fileName)).read().splitlines()
-        for i in range(len(f)):
-            if self.debug:
-                if i % 50 == 0:
-                    self.updatelogfile(" ".join(['Processed natural class',str(i),'of',str(len(f))]))
-            l = f[i].split("\t")
-            segs = l[-1].split(",")
-            feats = l[0].split(": ")[-1].split(",")
-            for s in segs:
-                if s in self.segMapping:
-                    self.segMapping[s] = self.segMapping[s] | set(feats)
-                else:
-                    self.segMapping[s] = set(feats)
+    #def _loadNaturalClasses(self,grammarType):
+    #    if grammarType == 'custom':
+    #        fileName = 'NaturalClassesForCustomGrammar.txt'
+    #    elif grammarType == 'HayesWhite':
+    #        fileName = 'NaturalClassesForHayesWhiteGrammar.txt'
+    #    elif grammarType == 'NoStress':
+    #        fileName = 'NaturalClassesForNoStressGrammar.txt'
+    #    else:
+    #        fileName = 'NaturalClassesForDefaultGrammar.txt'
+    #    f = open(os.path.join(self.basedir,"Grammars",fileName)).read().splitlines()
+    #    for i in range(len(f)):
+    #        if self.debug:
+    #            if i % 50 == 0:
+    #                self.updatelogfile(" ".join(['Processed natural class',str(i),'of',str(len(f))]))
+    #        l = f[i].split("\t")
+    #        segs = l[-1].split(",")
+    #        feats = l[0].split(": ")[-1].split(",")
+    #        for s in segs:
+    #            if s in self.segMapping:
+    #                self.segMapping[s] = self.segMapping[s] | set(feats)
+    #            else:
+    #                self.segMapping[s] = set(feats)
         #This gives a segment to feature set mapping that includes any feature that corresponds to
         #a segment across all the natural class definitions
     
@@ -178,7 +178,7 @@ class BlickLoader:
             return score,cons
         return score
         
-    def assessFile(self,path,outpath=None):
+    def assessFile(self,path,outpath=None,includeConstraints=False):
         if self.debug:
             self.updatelogfile(" ".join(["Assessing",os.path.abspath(path)]))
         inputF = open(path).read().splitlines()
@@ -186,8 +186,7 @@ class BlickLoader:
             self.updatelogfile(" ".join(["Creating output file",os.path.abspath(outpath)]))
         if outpath is None:
             mod = os.path.split(path)
-            mod[1] = mod[1].replace(".","-output.")
-            outpath = os.path.join()
+            outpath = os.path.join(mod[0],mod[1].replace(".","-output."))
         outputF = open(outpath,'w')
         outlines = []
         for i in range(len(inputF)):
@@ -196,8 +195,14 @@ class BlickLoader:
                     self.updatelogfile(" ".join(['Done with item',str(i),'of',str(len(inputF))]))
             line = inputF[i].split("\t")
             segs = line[0].strip()
-            score,cons = self.assessWord(segs)
-            outputF.write("\t".join([segs,str(score),','.join(cons)]+line[1:]))
+            outline = [segs]
+            if includeConstraints:
+                score,cons = self.assessWord(segs,includeConstraints=True)
+                outline.extend([str(score),','.join(cons)])
+            else:
+                score = self.assessWord(segs)
+                outline.append(str(score))
+            outputF.write("\t".join(outline+line[1:]))
             outputF.write("\n")
         outputF.close()
         if self.debug:
@@ -221,16 +226,16 @@ class Constraint:
         for i in desc:
             self.description.append(set(i.replace("]","").replace("[","").split(",")))
     
-    def _convertOriginalTextFiles(self,line):
-        l = line.split("\t")
-        score = float(l[-1])
-        tier = l[1].replace("(tier=","").replace(")","")
-        #Convert description of constraint into feature sets
-        des = l[0].replace("*","").split("][")
-        description = []
-        for i in des:
-            description.append(set(i.replace("]","").replace("[","").split(",")))
-        return description,score,tier
+    #def _convertOriginalTextFiles(self,line):
+    #    l = line.split("\t")
+    #    score = float(l[-1])
+    #    tier = l[1].replace("(tier=","").replace(")","")
+    #    #Convert description of constraint into feature sets
+    #    des = l[0].replace("*","").split("][")
+    #    description = []
+    #    for i in des:
+    #        description.append(set(i.replace("]","").replace("[","").split(",")))
+    #    return description,score,tier
         
 
     def _getTierSegs(self,segs):
@@ -279,12 +284,12 @@ class Constraint:
             
             
     
-if __name__ == "__main__":
-    b = BlickLoader()
+#if __name__ == "__main__":
+#    b = BlickLoader()
     
     #print b.assessWord("T EH1 S T")
-    print b.assessWord("AH0 S NG IY1 R Y EH1 S T")
-    #b.assessFile(os.path.join(b.basedir,"Input","Simple.txt"), os.path.join(b.basedir,"Output","SimpleTest.txt"))
+    #print b.assessWord("AH0 S NG IY1 R Y EH1 S T")
+#    b.assessFile("/home/michael/dev/LingTools/BLICK/Input/Simple.txt")
     
     
     
