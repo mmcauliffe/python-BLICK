@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='python-BLICK',
-    version='0.2.0',
+    version='0.2.1',
     author='Michael McAuliffe, Bruce Hayes',
     author_email='michael.e.mcauliffe@gmail.com',
     packages=['blick', 'blick.test'],
