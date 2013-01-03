@@ -14,13 +14,13 @@ class BlickLoader:
             #print "Debugging mode enabled."
             #print "Creating log file"
             self.initLog()
-        
+
         if debug:
             self.updatelogfile("Loading syllabification information...")
         from blick.syllabification import ONSETS,VOWELS
         self.onsets = ONSETS
         self.vowels = VOWELS
-        
+
         if debug:
             self.updatelogfile("Loading grammar...")
         if grammarType == 'HayesWhite':
@@ -41,25 +41,25 @@ class BlickLoader:
         self.segMapping = nc
         if debug:
             self.updatelogfile("Done initializing!")
-    
+
     def initLog(self):
         f = open(os.path.join(self.basedir,"PyBlickLog.txt"),'w')
         f.write("Begin operation\n")
         f.close()
-        
+
     def updatelogfile(self,linetowrite):
         f = open(os.path.join(self.basedir,"PyBlickLog.txt"),'a')
         f.write(linetowrite+"\n")
         f.close()
-    
+
     #def _loadOnsets(self):
     #    f = open(os.path.join(self.basedir,"Syllabification","Onsets.txt")).read().splitlines()
     #    return set(f)
-    
+
     #def _loadVowels(self):
     #    f = open(os.path.join(self.basedir,"Syllabification","Vowels.txt")).read().splitlines()
     #    return set(f)
-    
+
     #def _loadGrammar(self,grammarType):
     #    if grammarType == 'custom':
     #        fileName = 'CustomGrammar.txt'
@@ -77,7 +77,7 @@ class BlickLoader:
     #                self.updatelogfile(" ".join(['Added constraint',str(i),'of',str(len(f))]))
     #        cons.append(Constraint(f[i]))
     #    return cons
-    
+
     #def _loadNaturalClasses(self,grammarType):
     #    if grammarType == 'custom':
     #        fileName = 'NaturalClassesForCustomGrammar.txt'
@@ -102,7 +102,7 @@ class BlickLoader:
     #                self.segMapping[s] = set(feats)
         #This gives a segment to feature set mapping that includes any feature that corresponds to
         #a segment across all the natural class definitions
-    
+
     def _syllabify(self,inputword):
         segs = inputword.split(" ")
         seglist = []
@@ -119,7 +119,7 @@ class BlickLoader:
         #Deal with leftover segment at the end
         if cons != []:
             seglist.append(cons)
-        if type(seglist[-1]).__name__ == 'str':
+        if type(seglist[-1]) is not list:
             if segs[-1] in self.vowels:
                 seglist.append(segs[-1])
             else:
@@ -135,7 +135,7 @@ class BlickLoader:
         VowAdded = False #Tracks whether the first vowel is present
         for i in range(len(seglist)):
             s = seglist[i]
-            if type(s).__name__ == 'str': #Append vowels as is
+            if type(s) is not list: #Append vowels as is
                 returnlist.append(s)
                 VowAdded = True
                 continue
@@ -157,9 +157,9 @@ class BlickLoader:
                 for c in s:
                     returnlist.append(c+"Coda")
         return returnlist
-                
-            
-    
+
+
+
     def assessWord(self,inputword,includeConstraints=False):
         segs = self._syllabify(inputword) #Syllabify segments
         segs = ["#"] + segs + ["#"]
@@ -169,7 +169,7 @@ class BlickLoader:
         score = 0.0
         cons = []
         #For each constraint, evaluate the word and sum scores on each constraint
-        for c in self.grammar: 
+        for c in self.grammar:
             cScore = c.assess(f)
             if cScore != 0.0:
                 score += cScore
@@ -177,7 +177,7 @@ class BlickLoader:
         if includeConstraints:
             return score,cons
         return score
-        
+
     def assessFile(self,path,outpath=None,includeConstraints=False):
         if self.debug:
             self.updatelogfile(" ".join(["Assessing",os.path.abspath(path)]))
@@ -207,7 +207,7 @@ class BlickLoader:
         outputF.close()
         if self.debug:
             self.updatelogfile(" ".join(["Finished assessing",os.path.abspath(path)]))
-        
+
 class Constraint:
     def __init__(self,textdesc,score,tier='default'):
         self.score = score
@@ -225,7 +225,7 @@ class Constraint:
         self.description = []
         for i in desc:
             self.description.append(set(i.replace("]","").replace("[","").split(",")))
-    
+
     #def _convertOriginalTextFiles(self,line):
     #    l = line.split("\t")
     #    score = float(l[-1])
@@ -236,7 +236,7 @@ class Constraint:
     #    for i in des:
     #        description.append(set(i.replace("]","").replace("[","").split(",")))
     #    return description,score,tier
-        
+
 
     def _getTierSegs(self,segs):
         tierSegs = []
@@ -244,7 +244,7 @@ class Constraint:
             if s >= self.tierFeats or s == set(['+word_boundary']):
                 tierSegs.append(s)
         return tierSegs
-    
+
     def assess(self,segs):
         if self.tier != 'default': #Only look at segments relevant for a tier
             segs = self._getTierSegs(segs)
@@ -252,20 +252,20 @@ class Constraint:
         if wLength > 1: #Create all possible comparisons based on window length of constraint
             assessList = [segs[i:i+wLength] for i in range(len(segs)-(wLength-1))]
         else:
-            assessList = [segs[i:i+1] for i in range(len(segs)-1)] 
+            assessList = [segs[i:i+1] for i in range(len(segs)-1)]
         score = 0.0
         for w in assessList:
             match = True
             for i in range(wLength): #Compare all feature sets of a constraint to the corresponding feature sets of segments
-                #If the constraint feature sets are not subsets of the segment feature set 
+                #If the constraint feature sets are not subsets of the segment feature set
                 #then that comparison doesn't meet constraint criteria
-                if len(self.description[i] - w[i]) != 0: 
+                if len(self.description[i] - w[i]) != 0:
                     match = False
                     break
             if match: #For each match, find the product of number of instances and the score
                 score += self.score
         return score
-    
+
     def writeDescription(self):
         output = ''
         for x in self.description:
@@ -281,15 +281,15 @@ class Constraint:
         if self.tier != 'default':
             output += ' ('+ self.tier+" tier)"
         return output
-            
-            
-    
+
+
+
 #if __name__ == "__main__":
 #    b = BlickLoader()
-    
+
     #print b.assessWord("T EH1 S T")
     #print b.assessWord("AH0 S NG IY1 R Y EH1 S T")
 #    b.assessFile("/home/michael/dev/LingTools/BLICK/Input/Simple.txt")
-    
-    
-    
+
+
+
