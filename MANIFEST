@@ -4,6 +4,7 @@ LICENSE.txt
 README.md
 README.txt
 setup.py
+bin/BlickAFile.py
 blick/__init__.py
 blick/classes.py
 blick/grammars.py
