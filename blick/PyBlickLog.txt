@@ -1,34 +1,8 @@
 Begin operation
-Loading onsets...
-Loading vowels...
+Loading syllabification information...
 Loading grammar...
-Added constraint 0 of 189
-Added constraint 50 of 189
-Added constraint 100 of 189
-Added constraint 150 of 189
 Loading natural classes...
-Processed natural class 0 of 1195
-Processed natural class 50 of 1195
-Processed natural class 100 of 1195
-Processed natural class 150 of 1195
-Processed natural class 200 of 1195
-Processed natural class 250 of 1195
-Processed natural class 300 of 1195
-Processed natural class 350 of 1195
-Processed natural class 400 of 1195
-Processed natural class 450 of 1195
-Processed natural class 500 of 1195
-Processed natural class 550 of 1195
-Processed natural class 600 of 1195
-Processed natural class 650 of 1195
-Processed natural class 700 of 1195
-Processed natural class 750 of 1195
-Processed natural class 800 of 1195
-Processed natural class 850 of 1195
-Processed natural class 900 of 1195
-Processed natural class 950 of 1195
-Processed natural class 1000 of 1195
-Processed natural class 1050 of 1195
-Processed natural class 1100 of 1195
-Processed natural class 1150 of 1195
 Done initializing!
+Assessing /home/michael/Downloads/BLICK/FilesNeededForOperation/Dictionary.txt
+Creating output file /home/michael/Downloads/BLICK/FilesNeededForOperation/Dictionary-output.txt
+Finished assessing /home/michael/Downloads/BLICK/FilesNeededForOperation/Dictionary.txt

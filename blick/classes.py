@@ -4,7 +4,8 @@ Created on 2012-10-02
 @author: michael
 '''
 import os
-
+import sys
+sys.path.append(os.path.abspath('/home/michael/dev/Linguistics/python-BLICK'))
 
 class BlickLoader:
     def __init__(self,grammarType="default",debug=False):
@@ -108,34 +109,24 @@ class BlickLoader:
         seglist = []
         cons = []
         #Convert the segment list into a list of Vowels and Consonant lists
-        for i in range(len(segs)-1):
-            if segs[i] in self.vowels:
-                seglist.append(segs[i]) #Vowels appended as strings
-            else:
-                cons.append(segs[i]) #Consonant(s) are appended as lists
-                if segs[i+1] in self.vowels:
+        for s in segs:
+            if s in self.vowels:
+                if cons != []:
                     seglist.append(cons)
-                    cons=[]
+                    cons = []
+                seglist.append(s) #Vowels appended as strings
+            else:
+                cons.append(s) #Consonant(s) are appended as lists
         #Deal with leftover segment at the end
         if cons != []:
             seglist.append(cons)
-        if type(seglist[-1]) is not list:
-            if segs[-1] in self.vowels:
-                seglist.append(segs[-1])
-            else:
-                seglist.append([segs[-1]])
-        else:
-            if segs[-1] in self.vowels:
-                seglist.append(segs[-1])
-            else:
-                seglist[-1].append(segs[-1])
         #At this point, seglist should look like: [['C','C'],'V',['C'],'V','V']
         #Make Consonants either onsets or codas
         returnlist = []
         VowAdded = False #Tracks whether the first vowel is present
         for i in range(len(seglist)):
             s = seglist[i]
-            if type(s) is not list: #Append vowels as is
+            if not isinstance(s,list): #Append vowels as is
                 returnlist.append(s)
                 VowAdded = True
                 continue
@@ -150,9 +141,9 @@ class BlickLoader:
                             returnlist.append(c+"Coda")
                         for o in s[j:]:
                             returnlist.append(o)
-                        continue
-                    for c in s:
-                        returnlist.append(c+"Coda")
+                        break
+                else:
+                    returnlist.extend([c+"Coda" for c in s])
             else: #All consonants at the end are codas
                 for c in s:
                     returnlist.append(c+"Coda")
@@ -179,32 +170,30 @@ class BlickLoader:
         return score
 
     def assessFile(self,path,outpath=None,includeConstraints=False):
-        if self.debug:
-            self.updatelogfile(" ".join(["Assessing",os.path.abspath(path)]))
-        inputF = open(path).read().splitlines()
-        if self.debug:
-            self.updatelogfile(" ".join(["Creating output file",os.path.abspath(outpath)]))
         if outpath is None:
             mod = os.path.split(path)
             outpath = os.path.join(mod[0],mod[1].replace(".","-output."))
-        outputF = open(outpath,'w')
-        outlines = []
-        for i in range(len(inputF)):
-            if self.debug:
-                if i % 50 == 0:
-                    self.updatelogfile(" ".join(['Done with item',str(i),'of',str(len(inputF))]))
-            line = inputF[i].split("\t")
-            segs = line[0].strip()
-            outline = [segs]
-            if includeConstraints:
-                score,cons = self.assessWord(segs,includeConstraints=True)
-                outline.extend([str(score),','.join(cons)])
-            else:
-                score = self.assessWord(segs)
-                outline.append(str(score))
-            outputF.write("\t".join(outline+line[1:]))
-            outputF.write("\n")
-        outputF.close()
+        if self.debug:
+            self.updatelogfile(" ".join(["Assessing",os.path.abspath(path)]))
+        if self.debug:
+            self.updatelogfile(" ".join(["Creating output file",os.path.abspath(outpath)]))
+        with open(outpath,'w') as outf:
+            with open(path,'r') as inf:
+                for line in inf:
+                    #if self.debug:
+                    #    if i % 50 == 0:
+                    #        self.updatelogfile(" ".join(['Done with item',str(i),'of',str(len(inputF))]))
+                    line = line.strip().split("\t")
+                    segs = line[0].strip()
+                    outline = [segs]
+                    if includeConstraints:
+                        score,cons = self.assessWord(segs,includeConstraints=True)
+                        outline.extend([str(score),','.join(cons)])
+                    else:
+                        score = self.assessWord(segs)
+                        outline.append(str(score))
+                    outf.write("\t".join(outline+line[1:]))
+                    outf.write("\n")
         if self.debug:
             self.updatelogfile(" ".join(["Finished assessing",os.path.abspath(path)]))
 
@@ -284,12 +273,13 @@ class Constraint:
 
 
 
-#if __name__ == "__main__":
-#    b = BlickLoader()
+if __name__ == "__main__":
+    b = BlickLoader(debug=True)
 
-    #print b.assessWord("T EH1 S T")
+    #print(b.assessWord("AO2 R AE1 NG AH0 T AA2 N",includeConstraints=True))
+    #print(b.assessWord("D IH1 NG IY0",includeConstraints=True))
     #print b.assessWord("AH0 S NG IY1 R Y EH1 S T")
-#    b.assessFile("/home/michael/dev/LingTools/BLICK/Input/Simple.txt")
+    b.assessFile("/home/michael/Downloads/BLICK/FilesNeededForOperation/Dictionary.txt")
 
 
 
