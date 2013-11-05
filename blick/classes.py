@@ -4,8 +4,6 @@ Created on 2012-10-02
 @author: michael
 '''
 import os
-import sys
-sys.path.append(os.path.abspath('/home/michael/dev/Linguistics/python-BLICK'))
 
 class BlickLoader:
     def __init__(self,grammarType="default",debug=False):
@@ -271,15 +269,6 @@ class Constraint:
             output += ' ('+ self.tier+" tier)"
         return output
 
-
-
-if __name__ == "__main__":
-    b = BlickLoader(debug=True)
-
-    #print(b.assessWord("AO2 R AE1 NG AH0 T AA2 N",includeConstraints=True))
-    #print(b.assessWord("D IH1 NG IY0",includeConstraints=True))
-    #print b.assessWord("AH0 S NG IY1 R Y EH1 S T")
-    b.assessFile("/home/michael/Downloads/BLICK/FilesNeededForOperation/Dictionary.txt")
 
 
 
