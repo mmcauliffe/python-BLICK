@@ -1,6 +1,8 @@
 python-BLICK
 ============
 
+[![PyPI version](https://badge.fury.io/py/python-blick.svg)](https://badge.fury.io/py/python-blick)
+
 Python-BLICK is a Python implementation of BLICK (a phonotactic probability calculator for English), originally implemented in Visual Basic by Professor Bruce Hayes.  The original version can be found at http://www.linguistics.ucla.edu/people/hayes/BLICK/.
 
 Phonotactic probability refers to a property of a string of segments, such as a word or nonword.  Strings with high phonotactic probability align with a language's phonotactics more closely than words with low phonotactic probability.  For instance, the titular nonword blick is highly probable given the phonotactics of English, but the nonword bnick is highly improbable as bn onsets are banned.
