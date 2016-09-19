@@ -2,6 +2,7 @@ python-BLICK
 ============
 
 [![PyPI version](https://badge.fury.io/py/python-blick.svg)](https://badge.fury.io/py/python-blick)
+[![DOI](https://zenodo.org/badge/7265118.svg)](https://zenodo.org/badge/latestdoi/7265118)
 
 Python-BLICK is a Python implementation of BLICK (a phonotactic probability calculator for English), originally implemented in Visual Basic by Professor Bruce Hayes.  The original version can be found at http://www.linguistics.ucla.edu/people/hayes/BLICK/.
 
